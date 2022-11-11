@@ -100,7 +100,7 @@ class BroadlinkController(AbstractController):
                     raise Exception("Error while converting "
                                     "Pronto to Base64 encoding")
 
-            commands.append('b64:' + _command)
+            commands.append(f'b64:{_command}')
 
         service_data = {
             ATTR_ENTITY_ID: self._controller_data,
@@ -125,8 +125,9 @@ class XiaomiController(AbstractController):
         """Send a command."""
         service_data = {
             ATTR_ENTITY_ID: self._controller_data,
-            'command':  self._encoding.lower() + ':' + command
+            'command': f'{self._encoding.lower()}:{command}',
         }
+
 
         await self.hass.services.async_call(
             'remote', 'send_command', service_data)

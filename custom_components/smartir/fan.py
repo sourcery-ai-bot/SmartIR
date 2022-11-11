@@ -54,7 +54,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     if not os.path.isdir(device_files_absdir):
         os.makedirs(device_files_absdir)
 
-    device_json_filename = str(device_code) + '.json'
+    device_json_filename = f'{str(device_code)}.json'
     device_json_path = os.path.join(device_files_absdir, device_json_filename)
 
     if not os.path.exists(device_json_path):
@@ -101,7 +101,7 @@ class SmartIRFan(FanEntity, RestoreEntity):
         self._commands_encoding = device_data['commandsEncoding']
         self._speed_list = device_data['speed']
         self._commands = device_data['commands']
-        
+
         self._speed = SPEED_OFF
         self._direction = None
         self._last_on_speed = None
@@ -109,7 +109,7 @@ class SmartIRFan(FanEntity, RestoreEntity):
         self._support_flags = SUPPORT_SET_SPEED
 
         if (DIRECTION_REVERSE in self._commands and \
-            DIRECTION_FORWARD in self._commands):
+                DIRECTION_FORWARD in self._commands):
             self._direction = DIRECTION_REVERSE
             self._support_flags = (
                 self._support_flags | SUPPORT_DIRECTION)
@@ -167,7 +167,7 @@ class SmartIRFan(FanEntity, RestoreEntity):
     def state(self):
         """Return the current state."""
         if (self._on_by_remote or \
-            self._speed != SPEED_OFF):
+                self._speed != SPEED_OFF):
             return STATE_ON
         return SPEED_OFF
 
@@ -224,7 +224,7 @@ class SmartIRFan(FanEntity, RestoreEntity):
             self._speed = percentage_to_ordered_list_item(
                 self._speed_list, percentage)
 
-        if not self._speed == SPEED_OFF:
+        if self._speed != SPEED_OFF:
             self._last_on_speed = self._speed
 
         await self.send_command()
@@ -241,7 +241,7 @@ class SmartIRFan(FanEntity, RestoreEntity):
         """Set the direction of the fan"""
         self._direction = direction
 
-        if not self._speed.lower() == SPEED_OFF:
+        if self._speed.lower() != SPEED_OFF:
             await self.send_command()
 
         await self.async_update_ha_state()

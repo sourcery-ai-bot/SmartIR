@@ -92,10 +92,10 @@ async def _update(hass, branch, do_update=False, notify_if_latest=True):
 
                     if do_update is False:
                         hass.components.persistent_notification.async_create(
-                            "A new version of SmartIR integration is available ({}). "
-                            "Call the ``smartir.update_component`` service to update "
-                            "the integration. \n\n **Release notes:** \n{}"
-                            .format(last_version, release_notes), title='SmartIR')
+                            f"A new version of SmartIR integration is available ({last_version}). Call the ``smartir.update_component`` service to update the integration. \n\n **Release notes:** \n{release_notes}",
+                            title='SmartIR',
+                        )
+
                         return
 
                     # Begin update
@@ -118,8 +118,10 @@ async def _update(hass, branch, do_update=False, notify_if_latest=True):
                             "Please check the logs for more information.", title='SmartIR')
                     else:
                         hass.components.persistent_notification.async_create(
-                            "Successfully updated to {}. Please restart Home Assistant."
-                            .format(last_version), title='SmartIR')
+                            f"Successfully updated to {last_version}. Please restart Home Assistant.",
+                            title='SmartIR',
+                        )
+
     except Exception:
        _LOGGER.error("An error occurred while checking for updates.")
 
@@ -164,8 +166,6 @@ class Helper():
         packet += array
         packet += bytearray([0x0d, 0x05])
 
-        # Add 0s to make ultimate packet size a multiple of 16 for 128-bit AES encryption.
-        remainder = (len(packet) + 4) % 16
-        if remainder:
+        if remainder := (len(packet) + 4) % 16:
             packet += bytearray(16 - remainder)
         return packet
